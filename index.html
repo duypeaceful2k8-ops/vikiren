@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGUYỆN VỌNG CỦA DUY🫩</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #ffdde1); background-size: 400% 400%; animation: gradientBG 8s ease infinite; min-height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .heart-particle { position: fixed; font-size: 24px; animation: floatUp 5s linear infinite; z-index: 1; pointer-events: none; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5); opacity: 1; } 100% { transform: translateY(-10vh) scale(1.5); opacity: 0; } }
+        .card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 30px; padding: 40px 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-width: 420px; width: 90%; text-align: center; position: relative; z-index: 10; }
+        .avatar-box { width: 120px; height: 120px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 60px; margin: 0 auto 20px auto; border: 5px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { color: #d63384; font-size: 22px; margin-bottom: 20px; }
+        input[type="password"] { padding: 15px 20px; font-size: 20px; border-radius: 30px; border: 2px solid #ff69b4; text-align: center; margin-bottom: 20px; width: 80%; outline: none; }
+        .btn-main { padding: 15px 40px; font-size: 18px; font-weight: bold; color: white; background: linear-gradient(45deg, #ff1493, #ff69b4); border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 8px 20px rgba(255, 20, 147, 0.3); transition: transform 0.2s; }
+        .btn-main:hover { transform: scale(1.05); }
+        #gift-box-screen, #birthday-screen { display: none; }
+        .gift-icon { font-size: 100px; cursor: pointer; animation: bounce 1.2s infinite; margin: 20px 0; user-select: none; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .message-box { background: rgba(255, 255, 255, 0.95); border: 3px solid #ff1493; padding: 20px; border-radius: 20px; margin-top: 20px; font-size: 19px; color: #4a0e4e; font-weight: bold; line-height: 1.6; min-height: 100px; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+.music-disc-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: linear-gradient(135deg, #ff1493, #ff69b4); border: 3px solid #ffffff; border-radius: 50%; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.3); z-index: 1000; font-size: 26px; color: white; user-select: none; }
+        .spinning { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+    <div id="hearts-container"></div>
+
+    <div id="musicBtn" class="music-disc-btn" onclick="toggleMusic()" title="Bật / Tắt nhạc">🔇</div>
+
+    <audio id="bg-music" loop>
+        <source src="nhac.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="login-screen" class="card">
+        <div class="avatar-box">😠</div>
+        <h2>Mật khẩu là gì nhỉ? 😺😺</h2>
+        <input type="password" id="passInput" placeholder="Nhập 1234..." onkeypress="if(event.key === 'Enter') unlock()">
+        <br>
+        <button class="btn-main" onclick="unlock()">MỞ KHÓA NGAY </button>
+    </div>
+
+    <div id="gift-box-screen" class="card">
+        <h2 style="color: #ff1493;">Bạn có 1 món quà! 💌</h2>
+        <div class="gift-icon" onclick="openGift()">😼</div>
+        <p style="color: #d63384; font-weight: bold;">(Chạm vào con mèo nhé)</p>
+    </div>
+
+    <div id="birthday-screen" class="card">
+        <div style="font-size: 70px;">😼</div>
+        <h1 style="color: #ff1493; margin: 10px 0;">Đại ca làm phước! 🎉</h1>
+        <div class="message-box" id="msgText"></div>
+    </div>
+    <script>
+        var hearts = ['😼', '✨', '😼', '🎈', '💩'];
+        var container = document.getElementById('hearts-container');
+        for(var i = 0; i < 20; i++) {
+            var h = document.createElement('div');
+            h.className = 'heart-particle';
+            h.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            h.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(h);
+        }
+
+        function unlock() {
+            var val = document.getElementById("passInput").value.trim();
+            if (val === "1234") {
+                document.getElementById("login-screen").style.display = "none";
+                document.getElementById("gift-box-screen").style.display = "block";
+                document.getElementById("musicBtn").style.display = "flex";
+            } else {
+                alert("Ú oà! ngu vậy bạn 😜 Hãy nhập: 1234");
+                document.getElementById("passInput").value = ""; 
+            }
+        }
+
+        function openGift() {
+            document.getElementById("gift-box-screen").style.display = "none";
+            document.getElementById("birthday-screen").style.display = "block";
+            
+            var music = document.getElementById("bg-music");
+            var btn = document.getElementById("musicBtn");
+            music.play().then(() => {
+                btn.classList.add("spinning");
+                btn.innerText = "🎵";
+            }).catch((err) => {
+                console.log("Trình duyệt chặn hoặc chưa có file nhạc");
+            });
+
+            typeWriter();
+            fireConfetti();
+        }
+
+        function toggleMusic() {
+            var music = document.getElementById("bg-music");
+            var btn = document.getElementById("musicBtn");
+            if (music.paused) {
+                music.play().then(() => {
+                    btn.classList.add("spinning");
+                    btn.innerText = "🎵";
+                }).catch(() => {
+                    alert("⚠️ Lỗi: Không tìm thấy file 'nhac.mp3' trong cùng thư mục với file index.html");
+                });
+            } else {
+                music.pause();
+                btn.classList.remove("spinning");
+                btn.innerText = "🔇";
+            }
+        }
+
+        var text = "Làm phước cho Duy ít tiền nhé! 🥳✨";
+        var idx = 0;
+        function typeWriter() {
+            if (idx < text.length) {
+                document.getElementById("msgText").innerHTML += text.charAt(idx);
+                idx++;
+                setTimeout(typeWriter, 40);
+            }
+        }
+
+        function fireConfetti() {
+var canvas = document.getElementById('confetti-canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            var particles = [];
+            var colors = ['#ff1493', '#ffeb3b', '#00e676', '#00b0ff', '#ffffff'];
+
+            for (var i = 0; i < 80; i++) {
+                particles.push({
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 15, vy: (Math.random() - 0.5) * 15 - 5,
+                    size: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    life: 100
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                var alive = false;
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    if (p.life > 0) {
+                        alive = true;
+                        p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
+                        ctx.fillStyle = p.color; ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+                    }
+                }
+                if (alive) requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
